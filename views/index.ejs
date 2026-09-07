@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dummy Data Generator</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <style>
+      :root {
+        --page-gutter: clamp(1rem, 4vw, 3rem);
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        overflow-x: hidden;
+        background: linear-gradient(135deg, #f5fbf5 0%, #e8f5e9 48%, #f8f9fa 100%);
+      }
+
+      .navbar {
+        padding: 0.8rem var(--page-gutter);
+      }
+
+      .navbar .container-fluid {
+        padding: 0;
+      }
+
+      .page-content {
+        width: min(calc(100% - 2 * var(--page-gutter)), 72rem);
+        min-height: calc(100vh - 6rem);
+        margin: 2rem auto 4rem;
+      }
+
+      .status-alert {
+        width: min(calc(100% - 2 * var(--page-gutter)), 72rem);
+        margin: 1rem auto;
+      }
+
+      .app-grid {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: minmax(18rem, 0.85fr) minmax(0, 1.5fr);
+        gap: clamp(2rem, 6vw, 6rem);
+        align-items: center;
+        min-height: 32rem;
+        padding-bottom: 2rem;
+      }
+
+      .visual-panel {
+          top: 46%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        overflow: hidden;
+        min-height: 36rem;
+        padding: clamp(1.5rem, 4vw, 3rem);
+        background: linear-gradient(135deg, rgb(241 250 241 / 78%) 0%, rgb(232 245 233 / 46%) 52%, transparent 100%);
+      }
+
+      .visual-panel > *:not(.particle-field) {
+        position: relative;
+        z-index: 1;
+      }
+
+      .particle-field {
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 0;
+        background: radial-gradient(circle at 30% 40%, rgb(200 230 201 / 42%), transparent 45%);
+      }
+
+      .particle {
+        position: absolute;
+        width: 0.45rem;
+        height: 0.45rem;
+        border-radius: 50%;
+        background: #81c784;
+        opacity: 0.5;
+        animation: particle-float 8s ease-in-out infinite;
+      }
+
+      .particle:nth-child(1) { left: 12%; top: 22%; animation-delay: -1s; }
+      .particle:nth-child(2) { left: 28%; top: 72%; animation-delay: -3s; }
+      .particle:nth-child(3) { left: 46%; top: 16%; animation-delay: -2s; }
+      .particle:nth-child(4) { left: 68%; top: 82%; animation-delay: -4s; }
+      .particle:nth-child(5) { left: 84%; top: 34%; animation-delay: -2.5s; }
+      .particle:nth-child(6) { left: 76%; top: 62%; animation-delay: -0.5s; }
+      .particle:nth-child(7) { left: 8%; top: 48%; animation-delay: -5s; }
+      .particle:nth-child(8) { left: 18%; top: 88%; animation-delay: -1.5s; }
+      .particle:nth-child(9) { left: 36%; top: 38%; animation-delay: -6s; }
+      .particle:nth-child(10) { left: 54%; top: 92%; animation-delay: -3.5s; }
+      .particle:nth-child(11) { left: 62%; top: 10%; animation-delay: -6.5s; }
+      .particle:nth-child(12) { left: 92%; top: 76%; animation-delay: -4.5s; }
+      .particle:nth-child(13) { left: 44%; top: 68%; animation-delay: -7s; }
+      .particle:nth-child(14) { left: 4%; top: 14%; animation-delay: -2s; }
+      .particle:nth-child(15) { left: 96%; top: 18%; animation-delay: -7.5s; }
+
+      @keyframes particle-float {
+        0%, 100% {
+          transform: translate3d(0, 0, 0) scale(0.7);
+        }
+        50% {
+          transform: translate3d(0.8rem, -1.2rem, 0) scale(1.15);
+          opacity: 0.85;
+        }
+      }
+
+      .visual-panel h1 {
+        position: relative;
+        align-self: flex-start;
+        width: 100%;
+        margin: 0;
+        color: #198754;
+        font-size: clamp(1.6rem, 3vw, 2.25rem);
+        font-weight: 700;
+        line-height: 1.2;
+        text-align: left;
+        z-index: 2;
+      }
+
+      .control-panel {
+        width: min(100%, 34rem);
+        padding: clamp(1.5rem, 4vw, 3rem);
+        background: #fff;
+        border: 1px solid #e9ecef;
+        border-radius: 1rem;
+        box-shadow: 0 1rem 2rem rgb(33 37 41 / 8%);
+      }
+
+      .control-panel h2 {
+        margin-bottom: 1.5rem;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 0 3rem;
+      }
+
+      .empty-state h1 {
+        margin-bottom: 1rem;
+        color: #198754;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .generate-form {
+        margin-top: 0;
+        width: min(100%, 20rem);
+        text-align: center;
+        animation: form-rise 0.8s ease both;
+      }
+
+      .name-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #495057;
+        font-size: 1.05rem;
+        font-weight: 600;
+      }
+
+      .name-input {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 2px solid #d1e7dd;
+        border-radius: 999px;
+        text-align: center;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+      }
+
+      .name-input:focus {
+        border-color: #198754;
+        outline: 0;
+        box-shadow: 0 0 0 0.3rem rgb(25 135 84 / 18%);
+        transform: translateY(-2px);
+      }
+
+      .generate-button {
+        position: relative;
+        overflow: hidden;
+        min-width: 10rem;
+        margin-top: 1rem;
+        border: 0;
+        border-radius: 999px;
+        box-shadow: 0 0.5rem 1rem rgb(25 135 84 / 20%);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+      }
+
+      .generate-button::before {
+        position: absolute;
+        top: 0;
+        left: -75%;
+        width: 50%;
+        height: 100%;
+        background: rgb(255 255 255 / 35%);
+        content: "";
+        transform: skewX(-20deg);
+        transition: left 0.55s ease;
+      }
+
+      .generate-button:hover {
+        transform: translateY(-3px) scale(1.03);
+        box-shadow: 0 0.8rem 1.4rem rgb(25 135 84 / 28%);
+      }
+
+      .generate-button:hover::before {
+        left: 125%;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        border-radius: 0.5rem;
+      }
+
+      .table-wrap table {
+        min-width: 38rem;
+        margin-bottom: 0;
+      }
+
+      @media (max-width: 576px) {
+        .navbar-brand {
+          max-width: 14rem;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .page-content {
+          min-height: 0;
+          margin-top: 1.25rem;
+        }
+
+        .app-grid {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+          min-height: 0;
+        }
+
+        .visual-panel {
+          align-items: center;
+          min-height: 28rem;
+        }
+
+        .visual-panel h1 {
+          top: auto;
+          left: auto;
+          right: auto;
+          align-self: flex-start;
+          margin-bottom: 0;
+          font-size: 1.65rem;
+          text-align: center;
+        }
+
+        .control-panel {
+          width: 100%;
+          padding: 1.25rem;
+        }
+
+        .empty-state {
+          padding-top: 1rem;
+        }
+
+        .empty-state h1 {
+          font-size: 1.65rem;
+        }
+
+        .avatar-orbit {
+          top: auto;
+          left: auto;
+          width: 12rem;
+          height: 12rem;
+          margin: 1.5rem auto 0;
+        }
+
+        .data-loader {
+          top: 3rem;
+          left: 3rem;
+          width: 6rem;
+          height: 6rem;
+        }
+
+        .generate-button {
+          width: 100%;
+        }
+
+        .table-wrap table {
+          min-width: 34rem;
+        }
+      }
+
+      @keyframes form-rise {
+        from {
+          opacity: 0;
+          transform: translateY(1rem);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .avatar-orbit {
+        position: relative;
+        width: min(22rem, 100%);
+        height: min(22rem, 100%);
+        margin: 2rem auto 0;
+        animation: none;
+      }
+
+      .data-loader {
+        position: absolute;
+        top: 6.5rem;
+        left: 6.5rem;
+        width: 9rem;
+        height: 9rem;
+        border: 0.35rem solid #dee2e6;
+        border-top-color: #198754;
+        border-radius: 50%;
+        animation: spin 1.4s linear infinite, pulse-ring 1.8s ease-in-out infinite;
+      }
+
+      .data-loader::after {
+        content: "";
+        position: absolute;
+        inset: 1.6rem;
+        border-radius: 50%;
+        background: #198754;
+        box-shadow: 0 0 0 0.45rem #d1e7dd;
+        animation: pulse 1.2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        50% {
+          transform: scale(0.72);
+          opacity: 0.55;
+        }
+      }
+
+      .avatar {
+        position: fixed;
+        display: grid;
+        place-items: end center;
+        width: 3.6rem;
+        height: 3.6rem;
+        border: 0.2rem solid #fff;
+        border-radius: 50%;
+        box-shadow: 0 0.25rem 0.7rem rgb(33 37 41 / 20%);
+        z-index: 2;
+        pointer-events: none;
+        animation: avatar-zigzag 16s ease-in-out infinite;
+      }
+
+      .avatar-face {
+        position: relative;
+        z-index: 1;
+        width: 1.35rem;
+        height: 1.45rem;
+        margin-bottom: 0.8rem;
+        border-radius: 48% 48% 45% 45%;
+        background: #ffd7b5;
+        box-shadow: 0 0.65rem 0 0.18rem var(--shirt);
+      }
+
+      .avatar-face::before {
+        position: absolute;
+        top: -0.25rem;
+        left: -0.12rem;
+        width: 1.6rem;
+        height: 0.65rem;
+        border-radius: 60% 60% 35% 35%;
+        background: var(--hair);
+        content: "";
+      }
+
+      .avatar-face::after {
+        position: absolute;
+        top: 0.72rem;
+        left: 0.35rem;
+        width: 0.18rem;
+        height: 0.18rem;
+        border-radius: 50%;
+        background: #343a40;
+        box-shadow: 0.48rem 0 #343a40;
+        content: "";
+      }
+
+      .avatar-one {
+        top: 10%;
+        left: 4%;
+        --hair: #5c4033;
+        --shirt: #f4a261;
+        animation-delay: -1s;
+      }
+
+      .avatar-two {
+        top: 28%;
+        left: 82%;
+        --hair: #263238;
+        --shirt: #76c893;
+        animation-delay: -5s;
+      }
+
+      .avatar-three {
+        top: 62%;
+        left: 12%;
+        --hair: #9c6644;
+        --shirt: #90caf9;
+        animation-delay: -9s;
+      }
+
+      .avatar-four {
+        top: 78%;
+        left: 72%;
+        --hair: #6d597a;
+        --shirt: #f28482;
+        animation-delay: -13s;
+      }
+
+      .avatar-five {
+        top: 18%;
+        left: 46%;
+        --hair: #3d405b;
+        --shirt: #f2cc8f;
+        animation-delay: -3s;
+      }
+
+      .avatar-six {
+        top: 44%;
+        left: 88%;
+        --hair: #386641;
+        --shirt: #b7e4c7;
+        animation-delay: -7s;
+      }
+
+      .avatar-seven {
+        top: 86%;
+        left: 38%;
+        --hair: #7f5539;
+        --shirt: #ffb4a2;
+        animation-delay: -11s;
+      }
+
+      .avatar-eight {
+        top: 52%;
+        left: 2%;
+        --hair: #5a189a;
+        --shirt: #cdb4db;
+        animation-delay: -15s;
+      }
+
+      @keyframes avatar-zigzag {
+        0%, 100% {
+          transform: translate3d(0, 0, 0) rotate(0deg);
+        }
+        16% {
+          transform: translate3d(18vw, 10vh, 0) rotate(8deg);
+        }
+        32% {
+          transform: translate3d(58vw, -4vh, 0) rotate(-8deg);
+        }
+        48% {
+          transform: translate3d(78vw, 20vh, 0) rotate(10deg);
+        }
+        64% {
+          transform: translate3d(42vw, 48vh, 0) rotate(-10deg);
+        }
+        80% {
+          transform: translate3d(8vw, 26vh, 0) rotate(8deg);
+        }
+      }
+
+      @keyframes orbit {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes counter-orbit {
+        to {
+          transform: rotate(-360deg);
+        }
+      }
+
+      @keyframes pulse-ring {
+        50% {
+          box-shadow: 0 0 0 0.8rem rgb(25 135 84 / 12%);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+    <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">Dummy Data Generator</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#mainNavbar"
+          aria-controls="mainNavbar"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNavbar">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/">Home</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <% if (generated) { %>
+      <div class="alert alert-primary alert-dismissible fade show status-alert" id="alertExample" role="alert">
+        <strong>Success!</strong> Your dummy data is ready.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% } %>
+    <main class="page-content">
+      <div class="particle-field" aria-hidden="true">
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+        <span class="particle"></span>
+            <span class="particle"></span>
+            <span class="particle"></span>
+            <span class="particle"></span>
+            <span class="particle"></span>
+            <span class="particle"></span>
+            <span class="particle"></span>
+            <span class="particle"></span>
+            <span class="particle"></span>
+            <span class="particle"></span>
+      </div>
+      <div class="app-grid">
+        <section class="visual-panel" aria-label="Dummy data generator animation">
+          <h1>Dummy Data Generator</h1>
+          <div class="avatar-orbit" aria-hidden="true">
+            <div class="data-loader"></div>
+            <div class="avatar avatar-one"><span class="avatar-face"></span></div>
+            <div class="avatar avatar-two"><span class="avatar-face"></span></div>
+            <div class="avatar avatar-three"><span class="avatar-face"></span></div>
+            <div class="avatar avatar-four"><span class="avatar-face"></span></div>
+            <div class="avatar avatar-five"><span class="avatar-face"></span></div>
+            <div class="avatar avatar-six"><span class="avatar-face"></span></div>
+            <div class="avatar avatar-seven"><span class="avatar-face"></span></div>
+            <div class="avatar avatar-eight"><span class="avatar-face"></span></div>
+          </div>
+        </section>
+        <section class="control-panel">
+          <% if (employees.length === 0) { %>
+            <h2>Enter your name</h2>
+            <form action="/genrate" method="get" class="generate-form">
+              <label for="employeeName" class="name-label">Name</label>
+              <input
+                type="text"
+                class="name-input"
+                id="employeeName"
+                name="name"
+                placeholder="Your name"
+                required
+              />
+              <button type="submit" class="btn btn-success action-button generate-button">
+                Generate Now
+              </button>
+            </form>
+          <% } else { %>
+            <h2>Generated Employees</h2>
+            <div class="table-responsive table-wrap">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Salary</th>
+                <th>Language</th>
+                <th>City</th>
+                <th>Manager</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% employees.forEach((employee) => { %>
+                <tr>
+                  <td><%= employee.name %></td>
+                  <td><%= employee.salary %></td>
+                  <td><%= employee.language %></td>
+                  <td><%= employee.city %></td>
+                  <td><%= employee.isManger ? "Yes" : "No" %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+            </div>
+            <a href="/" class="btn btn-secondary action-button">Back to Home</a>
+          <% } %>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      document.querySelectorAll(".action-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          button.classList.add("disabled");
+          button.setAttribute("aria-disabled", "true");
+          button.insertAdjacentHTML("afterbegin", '<span class="action-spinner" aria-hidden="true"></span>');
+        });
+      });
+    </script>
+
+  </body>
+</html>
