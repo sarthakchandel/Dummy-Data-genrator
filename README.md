@@ -212,6 +212,10 @@ The frontend can also be deployed separately depending on the project architectu
 ## 📸 Project Preview
 
 > Add screenshots of your Dummy Data Generator here.
+> <img width="1867" height="907" alt="image" src="https://github.com/user-attachments/assets/0d82dac3-a42b-4020-8258-94b77b8ec640" />
+<img width="1677" height="886" alt="image" src="https://github.com/user-attachments/assets/e41fdd9f-2a94-414f-9f1b-eab7dc356d11" />
+
+
 
 ```text
 Frontend Screenshot
